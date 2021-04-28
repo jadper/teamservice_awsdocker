@@ -1,6 +1,7 @@
 version: "3.1"
 services:
     app:
+        image: 276408663694.dkr.ecr.us-east-2.amazonaws.com/dockeroneapp
         restart: always
         build: .
         ports:
@@ -8,7 +9,7 @@ services:
         environment:
             SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/teamservice
     db:
-        image: mysql
+        image: 276408663694.dkr.ecr.us-east-2.amazonaws.com/dockeronedb
         restart: always
         environment:
             MYSQL_ROOT_PASSWORD: test1234
