@@ -1,0 +1,10 @@
+[
+    {
+      "name": "db",
+      "imageUri": "276408663694.dkr.ecr.us-east-2.amazonaws.com/dockeronedb"
+    },
+    {
+      "name": "app",
+      "imageUri": "276408663694.dkr.ecr.us-east-2.amazonaws.com/dockeroneapp"
+    }
+  ]
