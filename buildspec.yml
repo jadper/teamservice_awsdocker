@@ -1,19 +1,30 @@
 version: 0.2
 
 phases:
+  install:
+    runtime-versions:
+      docker: 19
   pre_build:
     commands:
-      - echo Entered prebuild phase
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - REPOSITORY_URI=276408663694.dkr.ecr.us-east-2.amazonaws.com/dockerone
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
   build:
     commands:
-      - echo Build started
-      - mvn -DskipTest clean package
-      - echo Doing docker build?
-
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - mvn -DskipTests clean package  
+      - docker-compose build
   post_build:
     commands:
-      - echo  Build completed
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '[{"name":"dockerone","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 artifacts:
-  files:
-    - target/teamservice-0.0.1-SNAPSHOT.jar
-  discard-paths: yes
+    files: imagedefinitions.json
